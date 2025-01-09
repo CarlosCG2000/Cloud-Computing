@@ -1,0 +1,7 @@
+# Introduction
+
+Our main goal is to learn how to deploy our application to the Cloud, but before we do that, we need to develop our application locally. In this section, we will learn how to set up our development environment, how to run our application locally, and how to test it.
+
+We will be using the Play Framework application included in the [apps/agenda](apps/agenda) directory. This is a simple Play application that allows us to manage a list of contacts. The application has a REST API that allows us to create, and list contacts. It's not our goal to learn how to develop a Play application, since you should already be familiar with that. Our goal is to learn how to deploy it to the Cloud and put in practice the different concepts that will help us to deploy a fault-tolerant and scalable application.
+
+The Agenda application is a small Play application that uses JPA to store the contacts in a database. The application uses an in-memory H2 database, so we don't need to set up a database server to run the application. The application is already configured to use the H2 database, so we don't need to make any changes to the application. We will iterate over the application as we learn how to deploy it to the Cloud.

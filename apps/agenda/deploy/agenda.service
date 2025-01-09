@@ -1,0 +1,12 @@
+[Unit]
+Description="Agenda App"
+
+[Service]
+WorkingDirectory=/home/ubuntu/agenda
+ExecStart=/home/ubuntu/agenda/bin/agenda -Dhttp.port=80 -Dplay.http.secret.key="9gx9[jnPE>zTDmzAC^p<ETbLBsnljKEqhT1CSDDDYubCw?4^agPJX:2Rz1k2?h<AaUB"
+ExecStop=/bin/kill -TERM $MAINPID
+Type=simple
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

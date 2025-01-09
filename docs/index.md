@@ -1,0 +1,3 @@
+# PlayFramework: deploying to the Cloud
+
+The goal of this section is to teach the students how to deploy their Play applications to the Cloud. We will learn how to deploy our application to AWS, levaraging the RDS service to store our data, performing a fault-tolerant and scalable deployment. We will also learn how to use tools like Packer and Terraform to automate the deployment of our application.

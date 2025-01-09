@@ -1,0 +1,40 @@
+site_name: PlayFramework and AWS
+site_url: https://migue.github.io/play-aws
+
+nav:
+    - Home: index.md
+    - Local development:
+      - Introduction: local/intro.md
+      - Running the app: local/running.md
+    - Manual deployment:
+      - Introduction: manual/intro.md
+      - Creating the instance: manual/instance.md
+      - Deploying our application: manual/deploy.md
+      - Running our application: manual/running.md
+      - Production database:
+          - Intro: database/intro.md
+          - Local MySQL: database/local-mysql.md
+          - Dependencies: database/dependencies.md
+          - AWS RDS: database/rds.md
+          - Connecting to RDS: database/connecting.md
+      - Scaling and fault-tolerance:
+        - Intro: scaling/intro.md
+        - Creating a snapshot: scaling/ami.md
+        - Load balancing: scaling/loadbalancing.md
+    - Infrastructure as Code:
+        - Intro: iac/intro.md
+        - Why?: iac/why.md
+        - Types: iac/types.md
+        - Benefits: iac/benefits.md
+    - Automated deployment:
+        - Intro: automated/intro.md    
+        - Building the image: automated/packer.md
+        - Deploying the image: automated/terraform.md
+    - About me: about.md
+theme: material
+
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.snippets

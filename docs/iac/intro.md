@@ -1,0 +1,3 @@
+# Entering the infrastructure as code (IaC) world
+
+We have performed a fully operational deploy of a highly available and scalable application. However, it's been a manual and error-prone process. What happens if we need to deploy a new environment? What if we need to scale up or down? What if we need to update the application? We need to automate the process. During this journey, we will learn how to treat infrastructure as code, how to automate the deployment process, and how to manage the infrastructure as a programmable, manageable resource.
