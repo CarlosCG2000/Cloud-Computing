@@ -20,6 +20,6 @@ lazy val root = (project in file("."))
     ),
     Test / testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-v"),
     scalacOptions ++= List("-feature", "-Werror"),
-    javacOptions ++= List("-Xlint:unchecked", "-Xlint:deprecation", "-Werror"),
+    javacOptions ++= List("-source", "17", "-target", "17"),
     PlayKeys.externalizeResourcesExcludes += baseDirectory.value / "conf" / "META-INF" / "persistence.xml"
   )

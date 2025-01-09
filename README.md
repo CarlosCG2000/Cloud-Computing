@@ -102,7 +102,7 @@ El primer servicio que vamos a realizar es desplegar nuestra app en una instanci
 - Configuraciones de red: (POR DEFECTO)
 - Configuraciones almacenamiento: (POR DEFECTO)
 
-* Una vez creada vamos a conectarnos a esa máquina:
+* Una vez creada vamos a conectarnos a esa máquina virtual en la terminal:
 Estamos en el directorio de agenda ('playframework-cloud/apps/agenda')
 - En la terminal: `ssh -i /path/to/keypair.pem/DNS_IPv4_publica`.
 En mi caso: `ssh -i /Users/carlosCG/Desktop/3. Cloud Native Applications, Paas e Iaas, Containers/mi-clave.pem/ubuntu@ec2-51-92-1-10.eu-south-2.compute.amazonaws.com`
@@ -110,13 +110,66 @@ En mi caso: `ssh -i /Users/carlosCG/Desktop/3. Cloud Native Applications, Paas e
 - Dar permisos solo al propietario de ese archivo lo pueda leer: `chmod 700 /path/to/keypair.pem`.
 En mi caso: `chmod 700 /Users/carlosCG/Desktop/3. Cloud Native Applications, Paas e Iaas, Containers/mi-clave.pem`
 
-* Una vez dentro de la maquina con ubuntu, podemos ver varias cosas como:
+* Una vez dentro de la máquina con ubuntu, podemos ver varias cosas como:
 - La descripción: `uname -a`
 - Toda la información de l a máquina virtual: `cat /proc/cpuinfo`
 - Toda la información de la memoria: `cat /proc/memoinfo`
 
 Instalación del software necesario, el tiempo de ejecución de Java (dentro de la máquina virtual de ubuntu):
 - `sudo apt-get update && sudo apt upgrade`
-- `sudo apt-get install openjdk-17-jdk-headless unzip`
+- `sudo apt-get install openjdk-21-jdk-headless unzip`
+
+Recordar, siempre cuando lo dejemos tenemos que ir a la página web de AWS y tenemos que detener nuestra instancia.
 
 ## DÍA 2. 09/01/25
+Volvemos a inicializar nuestra instancia en la página web en AWS.
+
+Para volver en la terminal a la amquina virtual de ubuntu:
+Lanzamos en el directorio de 'playframework-cloud':
+- En la terminal: `ssh -i /path/to/keypair.pem/DNS_IPv4_publica`. (tener en cuenta que cada vez que inicializamos la instancia, se regenea la DNS Pública)
+En mi caso: `ssh -i "/Users/carlosCG/Desktop/3. Cloud Native Applications, Paas e Iaas, Containers/mi-clave.pem" ubuntu@ec2-18-100-153-36.eu-south-2.compute.amazonaws.com`
+
+Y ya estariamos en la maquina virtual en la terminal de nuevo como ayer.
+
+Tenemos que ir a la aplicación saliendo ahora de la máquina virtual: `exit`
+Vamos al directorio '/apps/agenda'
+- Vamos a crear el entregable de nuestra aplicación: `sbt dist`
+Y comprobamos que hemos creado el archivo zip: `ls -l target/universal/agenda-1.0-SNAPSHOT.zip`
+Nos devuelve: '-rw-r--r--@ 1 carlosCG  staff  66671325 Jan  9 23:01 target/universal/agenda-1.0-SNAPSHOT.zip'
+
+- Este archivo zip contiene todo lo necesario de nuestra app para ejecutar mi app: `unzip -l target/universal/agenda-1.0-SNAPSHOT.zip`
+
+Vamos a al directorio 'playframework-cloud'
+- Copiamos el archivo creado del zip en la maquina virtual: `scp -i /path/to/keypair.pem target/universal/agenda-1.0-SNAPSHOT.zip ubuntu@DNS_IPv4_publica:/home/ubuntu`
+En mi caso: `scp -i "/Users/carlosCG/Desktop/3. Cloud Native Applications, Paas e Iaas, Containers/mi-clave.pem" apps/agenda/target/universal/agenda-1.0-SNAPSHOT.zip ubuntu@ec2-18-100-153-36.eu-south-2.compute.amazonaws.com:/home/ubuntu`
+
+Volvemos a la máquina virtual.
+- En la terminal otra vez: `ssh -i /path/to/keypair.pem/DNS_IPv4_publica`.
+En mi caso: `ssh -i "/Users/carlosCG/Desktop/3. Cloud Native Applications, Paas e Iaas, Containers/mi-clave.pem" ubuntu@ec2-18-100-153-36.eu-south-2.compute.amazonaws.com`
+
+- Vemos que si hacemos `ls -l`
+Obtenemos el archivo: '-rw-r--r-- 1 ubuntu ubuntu 66671325 Jan  9 22:08 agenda-1.0-SNAPSHOT.zip'
+
+- Tenemos que descomprimir el zip: `unzip agenda-1.0-SNAPSHOT.zip`
+- Vemos que si hacemos `ls -l`
+'total 65116
+drwxrwxr-x 7 ubuntu ubuntu     4096 Jan  9 22:20 agenda-1.0-SNAPSHOT
+-rw-r--r-- 1 ubuntu ubuntu 66671325 Jan  9 22:08 agenda-1.0-SNAPSHOT.zip'
+
+Nos metemos en la directiva '/home/ubuntu/agenda-1.0-SNAPSHOT': `cd agenda-1.0-SNAPSHOT`
+- Ejecutamos el comando agenda, que escuche en el puerto 80 y lo demás es una particularidad de play con una semilla: `sudo ./bin/agenda -Dhttp.port=80 -Dplay.http.secret.key="9gx9[jnPE>zTDmzAC^p<ETbLBsnljKEqhT1CSDDDYubCw?4^agPJX:2Rz1k2?h<AaUB"`
+
+- Ahora vamos a la web y ponemos la url: `https://DNS_IPv4_publica`
+En mi caso: `http://ec2-18-100-153-36.eu-south-2.compute.amazonaws.com/`
+
+No va a funcionar porque el tráfico esta capado a nuestra instancia por defecto, por ello en la web de AWS:
+En mi instancia vamos a la caracteristica de 'Seguridad' y a 'Grupos de seguridad' (en mi caso `sg-02f30ee61a9e8fe61 (launch-wizard-1)`). Esto es un conjunto de reglas que permiten el tráfico a nuestra instancia. Le pulsamos al  `sg-02f30ee61a9e8fe61 (launch-wizard-1)` y en la nueva pagina en 'Reglas de entrada' le damos a 'Editar reglas de entrada' y añadimos una nueva regla: donde pongamos la opción HTTP, en el puerto 80 y en cualquier origen 0.0.0.0/0.
+
+- Para para el proceso, buscamos el pip de agenda: `ps aux | grep agenda`
+Y matamos dicho pip (solo si existe, si no pasamos a la siguiente linea): `kill -9 <PID>`
+Elimina el archivo RUNNING_PID para que la aplicación pueda iniciarse nuevamente: `rm -f /home/ubuntu/agenda-1.0-SNAPSHOT/RUNNING_PID`
+
+- Ahora ponemos lo visto anteriormente para arrancar: `sudo ./bin/agenda -Dhttp.port=80 -Dplay.http.secret.key="9gx9[jnPE>zTDmzAC^p<ETbLBsnljKEqhT1CSDDDYubCw?4^agPJX:2Rz1k2?h<AaUB"`
+- Y entramos en la web, vista tambien anteriormente: `https://DNS_IPv4_publica`
+En mi caso: `http://ec2-18-100-153-36.eu-south-2.compute.amazonaws.com/`
+
