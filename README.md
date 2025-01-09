@@ -12,9 +12,9 @@ TEORÍA: `https://migue.github.io/playframework-cloud/manual/instance/` ✅
 
 ARRANQUE SERVIDOR: `http://localhost:9000/` ✅
 
-AMAZON WEB SERVICE: `https://us-east-1.console.aws.amazon.com/console/home?region=us-east-1` ✅
+AMAZON WEB SERVICE: `https://aws.amazon.com/es/` ✅
 
-### ¿Qué vamos a hacer en esta asignatura?
+### 1. ¿Qué vamos a hacer en esta asignatura?
 Como construir aplicaciones normalmente de Backend que no se ejecuten en el móvil sino en la nube.
 En la anterior asignatura vimos una app que ofrece una serie de servicios de Endspoints o un Api para poder consumir o bien desde el móvil o desde cualquier otra parte,
 lo que vamos a hacer es completar esa app.
@@ -36,7 +36,7 @@ La estructura de la asignatura:
 La evaluación:
 Vamos a construir los dos scripts que permiten automatizar todo el proceso en el que vosotros desplegais la aplicación que construis para la anterior asignatura y lo que se van a tener que entregar esos dos scripts (a parte del video que se obliga en el máster).
 
-### Información que se nos da (es este proyecto se encuentra en mi carpeta `3. Cloud Native Applications, Paas e Iaas, Containers/playframework-cloud-main`)
+### 2. Información que se nos da (es este proyecto se encuentra en mi carpeta `3. Cloud Native Applications, Paas e Iaas, Containers/playframework-cloud-main`)
 1. 'Playframework-cloud-main/docs': se encuentran las presentaciones básicamente es lo mismo que viene en la página web: `https://migue.github.io/playframework-cloud/manual/instance/`, pero en vez de tenerlo en la nube esta en local por si no tenemos internet, etc.
 
 * Para poner en marcha la presentación en local:
@@ -55,7 +55,7 @@ Navegar a `http://127.0.0.1:8000/play-aws/`
 2. 'Playframework-cloud-main/apps/agenda' es la aplicación (donde esta el README.MD) y donde se encuentra todo lo relacionado con la app ya desarrolla por el profesor.
 Es una pequeña aplicacion que vamos a usar como base o nucleo de todas las cosas que vamos a aprender. Las cosas no vana estar ligadas a la aplicación, es decir no son particulares de ninguna aplicación, sino que son conceptos generales para constuir y desplegar la app en entornos Cloud. Esta app esta par ano tener que desarrollar una aplicación desde 0 y ya poder utilizar directamente la app y podernos centrar en el despliege.
 
-### Manifiesto de buenas prácticas (12 factor)
+### 3. Manifiesto de buenas prácticas (12 factor)
 Página web: `https://12factor.net/es/`
 
 - I. Código base (Codebase): Un código base sobre el que hacer el control de versiones y multiples despliegues
@@ -71,7 +71,7 @@ Página web: `https://12factor.net/es/`
 - XI. Historiales: Tratar los historiales como una transmisión de eventos
 - XII. Administración de procesos: Ejecutar las tareas de gestión/administración como procesos que solo se ejecutan una vez
 
-### DESPLIEGUE DE LA APP EN LOCAL
+### 4. Despliegue de la app en local
 Seguir los pasos `https://migue.github.io/playframework-cloud/manual/instance/`
 
 Nos vamos al directorio de la agenda: 'playframework-cloud/apps/agenda'
@@ -89,4 +89,33 @@ Ya esta arranca la aplicación y puesta a escuchar en el puerto 9000: `http://lo
 
 Simplemente es un listado donde se pueden visualizar nombres y añadirlo a través de un formulario con un input text y un button submit. Tiene una BD en memoria que si se mata la aplicación y se vuelve a correr desaparecen los nombres antiguos de la lista.
 
-### 
+### 5. La interfaz gráfica de AWS para crear una máquina virtual
+La url para acceder: `https://eu-south-2.console.aws.amazon.com/console/home?region=eu-south-2#`
+
+El primer servicio que vamos a realizar es desplegar nuestra app en una instancia de Amazon EC2 (servicios virtuales en la nube), que nos da la capacidad de crear máquinas virtuales:
+1. Icono de cuadrado con puntitos (superior-izquierda) --> Informática --> EC2
+2. Lanzar instancia:
+- Nombre de la instancia: 'mi-agenda-servidor'
+- Imágenes de aplicaciones y sistemas operativos: 'Ubuntu'
+- Tipo de instancia: 't3.micro' (gratuita)
+- Par de claves (inicio de sesión): --> Nombre: 'mi-clave' --> Tipo de par de claves: 'RSA' --> Formato de archivo de clave privada: 'pem' (si es MAC/Linux, sino .ppk)
+- Configuraciones de red: (POR DEFECTO)
+- Configuraciones almacenamiento: (POR DEFECTO)
+
+* Una vez creada vamos a conectarnos a esa máquina:
+Estamos en el directorio de agenda ('playframework-cloud/apps/agenda')
+- En la terminal: `ssh -i /path/to/keypair.pem/DNS_IPv4_publica`.
+En mi caso: `ssh -i /Users/carlosCG/Desktop/3. Cloud Native Applications, Paas e Iaas, Containers/mi-clave.pem/ubuntu@ec2-51-92-1-10.eu-south-2.compute.amazonaws.com`
+
+- Dar permisos solo al propietario de ese archivo lo pueda leer: `chmod 700 /path/to/keypair.pem`.
+En mi caso: `chmod 700 /Users/carlosCG/Desktop/3. Cloud Native Applications, Paas e Iaas, Containers/mi-clave.pem`
+
+* Una vez dentro de la maquina con ubuntu, podemos ver varias cosas como:
+- La descripción: `uname -a`
+- Toda la información de l a máquina virtual: `cat /proc/cpuinfo`
+- Toda la información de la memoria: `cat /proc/memoinfo`
+
+Instalación del software necesario, el tiempo de ejecución de Java (dentro de la máquina virtual de ubuntu):
+- `sudo apt-get update && sudo apt upgrade`
+- `sudo apt-get install openjdk-17-jdk-headless unzip`
+
