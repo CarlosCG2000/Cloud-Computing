@@ -4,7 +4,7 @@
 ## DIA 1. 08/01/25
 ENLACES (4):
 
-TEORÍA: `https://migue.github.io/playframework-cloud/manual/instance/` 
+TEORÍA: `https://migue.github.io/playframework-cloud/manual/instance/`
 
 Ó EN LOCAL: `http://127.0.0.1:8000/play-aws/` ✅
 
