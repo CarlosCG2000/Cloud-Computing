@@ -1,19 +1,18 @@
 
 # Cloud Native Applications, Paas e Iaas, Containers
 
-## DIA 1. 08/01/25
+## DÍA 1. 08/01/25
 ENLACES (4):
 
-TEORÍA: `https://migue.github.io/playframework-cloud/manual/instance/`
+TEORÍA: `https://migue.github.io/playframework-cloud/manual/instance/` ✅
 
 Ó EN LOCAL: `http://127.0.0.1:8000/play-aws/` ✅
 
 12 FACTORES (TEORÍA): `https://12factor.net/es/` ✅
 
-ARRANQUE SERVIDOR: `http://localhost:9000/`
+ARRANQUE SERVIDOR: `http://localhost:9000/` ✅
 
 AMAZON WEB SERVICE: `https://us-east-1.console.aws.amazon.com/console/home?region=us-east-1` ✅
-
 
 ### ¿Qué vamos a hacer en esta asignatura?
 Como construir aplicaciones normalmente de Backend que no se ejecuten en el móvil sino en la nube.
@@ -71,3 +70,23 @@ Página web: `https://12factor.net/es/`
 - X. Paridad en desarrollo y producción: Mantener desarrollo, preproducción y producción tan parecidos como sea posible
 - XI. Historiales: Tratar los historiales como una transmisión de eventos
 - XII. Administración de procesos: Ejecutar las tareas de gestión/administración como procesos que solo se ejecutan una vez
+
+### DESPLIEGUE DE LA APP EN LOCAL
+Seguir los pasos `https://migue.github.io/playframework-cloud/manual/instance/`
+
+Nos vamos al directorio de la agenda: 'playframework-cloud/apps/agenda'
+
+* Instalar Homebrew, el gestor de paquetes para macOS y Linux:
+- Ejecuta el instalador:`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+- Configurar el PATH manualmente (Apple Silicon (arm64)):
+`echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc`
+`source ~/.zshrc`
+
+* Instalar sbt: `brew install sbt`
+- Para ejecutar: `sbt clean run`
+
+Ya esta arranca la aplicación y puesta a escuchar en el puerto 9000: `http://localhost:9000/`
+
+Simplemente es un listado donde se pueden visualizar nombres y añadirlo a través de un formulario con un input text y un button submit. Tiene una BD en memoria que si se mata la aplicación y se vuelve a correr desaparecen los nombres antiguos de la lista.
+
+### 
