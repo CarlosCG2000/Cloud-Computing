@@ -172,4 +172,9 @@ Elimina el archivo RUNNING_PID para que la aplicación pueda iniciarse nuevament
 - Ahora ponemos lo visto anteriormente para arrancar: `sudo ./bin/agenda -Dhttp.port=80 -Dplay.http.secret.key="9gx9[jnPE>zTDmzAC^p<ETbLBsnljKEqhT1CSDDDYubCw?4^agPJX:2Rz1k2?h<AaUB"`
 - Y entramos en la web, vista tambien anteriormente: `https://DNS_IPv4_publica`
 En mi caso: `http://ec2-18-100-153-36.eu-south-2.compute.amazonaws.com/`
+Ya funcionaria la app en la web.
 
+¿Qué pasa si paro el proceso en la terminal?
+Ya no funcionaria la app en la web. Entonces vamos a hacer que el sistema operativo gestione ese proceso por nosotros, de manera que no tengamos qaue manualmente arrancar y parar la aplicación cada vez que necesitemos arrancar y parar la máquina virtual sino que sea el sistema operativo que gestione el ciclo de vida de nuestra aplicación por nosotros en esa instancia.
+
+MIN 41:30
