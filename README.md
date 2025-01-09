@@ -119,3 +119,4 @@ Instalación del software necesario, el tiempo de ejecución de Java (dentro de 
 - `sudo apt-get update && sudo apt upgrade`
 - `sudo apt-get install openjdk-17-jdk-headless unzip`
 
+## DÍA 2. 09/01/25
