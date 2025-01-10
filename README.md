@@ -394,4 +394,4 @@ En la próxima clase intentaremos ver comom escalar la app y tener multiples ins
 
 Recordar parar la instancia y borrar (no se pueden parar y volver a arrancar) la BD de AWS.
 
-
+## DÍA 3. 17/01/25
