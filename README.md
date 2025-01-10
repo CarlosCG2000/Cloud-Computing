@@ -124,9 +124,9 @@ Recordar, siempre cuando lo dejemos tenemos que ir a la página web de AWS y ten
 ## DÍA 2. 09/01/25
 Volvemos a inicializar nuestra instancia en la página web en AWS.
 
-Para volver en la terminal a la amquina virtual de ubuntu:
+Para volver en la terminal a la instancia de la máquina virtual de ubuntu:
 Lanzamos en el directorio de 'playframework-cloud':
-- En la terminal: `ssh -i /path/to/keypair.pem/DNS_IPv4_publica`. (tener en cuenta que cada vez que inicializamos la instancia, se regenea la DNS Pública)
+- 😸 En la terminal: `ssh -i /path/to/keypair.pem/DNS_IPv4_publica`. (tener en cuenta que cada vez que inicializamos la instancia, se regenea la DNS Pública)
 En mi caso: `ssh -i "/Users/carlosCG/Desktop/3. Cloud Native Applications, Paas e Iaas, Containers/mi-clave.pem" ubuntu@ec2-18-100-153-36.eu-south-2.compute.amazonaws.com`
 
 Y ya estariamos en la maquina virtual en la terminal de nuevo como ayer.
@@ -143,7 +143,7 @@ Vamos a al directorio 'playframework-cloud'
 - Copiamos el archivo creado del zip en la maquina virtual: `scp -i /path/to/keypair.pem target/universal/agenda-1.0-SNAPSHOT.zip ubuntu@DNS_IPv4_publica:/home/ubuntu`
 En mi caso: `scp -i "/Users/carlosCG/Desktop/3. Cloud Native Applications, Paas e Iaas, Containers/mi-clave.pem" apps/agenda/target/universal/agenda-1.0-SNAPSHOT.zip ubuntu@ec2-18-100-153-36.eu-south-2.compute.amazonaws.com:/home/ubuntu`
 
-Volvemos a la máquina virtual.
+Volvemos otra vez a la máquina virtual.
 - En la terminal otra vez: `ssh -i /path/to/keypair.pem/DNS_IPv4_publica`.
 En mi caso: `ssh -i "/Users/carlosCG/Desktop/3. Cloud Native Applications, Paas e Iaas, Containers/mi-clave.pem" ubuntu@ec2-18-100-153-36.eu-south-2.compute.amazonaws.com`
 
@@ -157,9 +157,9 @@ drwxrwxr-x 7 ubuntu ubuntu     4096 Jan  9 22:20 agenda-1.0-SNAPSHOT
 -rw-r--r-- 1 ubuntu ubuntu 66671325 Jan  9 22:08 agenda-1.0-SNAPSHOT.zip'
 
 Nos metemos en la directiva '/home/ubuntu/agenda-1.0-SNAPSHOT': `cd agenda-1.0-SNAPSHOT`
-- Ejecutamos el comando agenda, que escuche en el puerto 80 y lo demás es una particularidad de play con una semilla: `sudo ./bin/agenda -Dhttp.port=80 -Dplay.http.secret.key="9gx9[jnPE>zTDmzAC^p<ETbLBsnljKEqhT1CSDDDYubCw?4^agPJX:2Rz1k2?h<AaUB"`
+- 😸 Ejecutamos el comando agenda, que escuche en el puerto 80 y lo demás es una particularidad de play con una semilla: `sudo ./bin/agenda -Dhttp.port=80 -Dplay.http.secret.key="9gx9[jnPE>zTDmzAC^p<ETbLBsnljKEqhT1CSDDDYubCw?4^agPJX:2Rz1k2?h<AaUB"`
 
-- Ahora vamos a la web y ponemos la url: `https://DNS_IPv4_publica`
+- 😸 Ahora vamos a la web y ponemos la url: `https://DNS_IPv4_publica`
 En mi caso: `http://ec2-18-100-153-36.eu-south-2.compute.amazonaws.com/`
 
 No va a funcionar porque el tráfico esta capado a nuestra instancia por defecto, por ello en la web de AWS:
@@ -175,6 +175,127 @@ En mi caso: `http://ec2-18-100-153-36.eu-south-2.compute.amazonaws.com/`
 Ya funcionaria la app en la web.
 
 ¿Qué pasa si paro el proceso en la terminal?
-Ya no funcionaria la app en la web. Entonces vamos a hacer que el sistema operativo gestione ese proceso por nosotros, de manera que no tengamos qaue manualmente arrancar y parar la aplicación cada vez que necesitemos arrancar y parar la máquina virtual sino que sea el sistema operativo que gestione el ciclo de vida de nuestra aplicación por nosotros en esa instancia.
+Ya no funcionaria la app en la web. Entonces vamos a hacer que el sistema operativo gestione ese proceso por nosotros, de manera que no tengamos que manualmente arrancar y parar la aplicación cada vez que necesitemos arrancar y parar la máquina virtual sino que sea el sistema operativo que gestione el ciclo de vida de nuestra aplicación por nosotros en esa instancia.
 
-MIN 41:30
+Vamos a configurar nuestra aplicación dentro del sistema de gestión de servicios de Ubuntu que se llama SystemCTL.
+- Ponemos: `sudo vim /etc/systemd/system/agenda.servicio` (recordar estamos en la directiva '/home/ubuntu/agenda-1.0-SNAPSHOT')
+
+Y copiamos esta configuración:
+'
+[Unit]
+Description="Agenda Play application"
+
+[Service]
+WorkingDirectory=/home/ubuntu/agenda-1.0-SNAPSHOT
+ExecStart=/home/ubuntu/agenda-1.0-SNAPSHOT/bin/agenda -Dhttp.port=80 -Dplay.http.secret.key="9gx9[jnPE>zTDmzAC^p<ETbLBsnljKEqhT1CSDDDYubCw?4^agPJX:2Rz1k2?h<AaUB"
+ExecStop=/bin/kill -TERM $MAINPID
+Type=simple
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+'
+
+- Guardar en Vim: `:w` y presiona 'Enter'.
+- Salir en Vim: `:wq` y presiona 'Enter'.
+
+- Recargar el 'daemon system' de iniciar el servicio:
+`sudo systemctl daemon-reload`
+`sudo systemctl enable agenda`
+
+- Comprobación del estado del servicio. `sudo systemctl status agenda`
+si me da error, la solución es:
+`find . -name *.log`
+`sudo rm -f ./logs/application.log`
+`sudo systemctl start agenda`
+`sudo journalctl -f -uagenda`
+
+Y ya deberia de estar escuchando en el puerto 80
+
+- Y entramos en la web, vista tambien anteriormente: `https://DNS_IPv4_publica`
+En mi caso: `http://ec2-18-100-62-131.eu-south-2.compute.amazonaws.com/`
+
+Y veriamos otro vez la app desplegada.
+Ahora esta aplicacion esta gestionada por el sistema operativo,ahora si mi app se reinicia porque tiene un error,ante un a peticion concreta que produce un error no controlado o lo que sea, el servicio SystemCTL se va a cargar de reiniciarla o si me máquina se reinica por cualquier motivo el servicio va a arrancarla cuando se acabe de nuevo la máquina.
+
+Cortamos la ejecucion en la terminal
+Hacemos `sudo systemctl status agenda`
+
+Resultado:
+'
+● agenda.service - "Agenda Play application"
+     Loaded: loaded (/etc/systemd/system/agenda.service; enabled; preset: enabled)
+     Active: active (running) since Fri 2025-01-10 08:20:10 UTC; 3min 50s ago
+   Main PID: 2735 (java)
+      Tasks: 30 (limit: 1078)
+     Memory: 330.2M (peak: 331.5M)
+        CPU: 16.873s
+     CGroup: /system.slice/agenda.service
+             └─2735 java -Duser.dir=/home/ubuntu/agenda-1.0-SNAPSHOT -Dhttp.port=80 "-Dplay.http.secret.key=9gx9[jnPE>zTDmzAC^p<>
+'
+
+Y vemos como la app sigue funcionando,aunque hallamos cortado la ejecución de la terminal.
+
+- Si nos salimos de la instancia de la máquina virtual: `exit`
+La app en la web seguira tambien funcionando sin ningun problema
+
+Volvemos a la instancia de la maquina virtual: ``ssh -i /path/to/keypair.pem/DNS_IPv4_publica``
+- Nuestra app usa una BD que esta en memoria, si ahora voy al servicio y lo reinicio: `sudo systemctl restart agenda`
+Y hago ahora el `sudo journalctl -f -uagenda`, me vuelve a mostrar la app escuchando en el puerto 80, pero me ha borrado los nombres del listado (ha borrado la BD en memoria),esto solo nos serviria en desarrollo ya que en producción no tenia sentido.
+
+Vamos ahora a conectar nuestra app a una BD mas robusta que cuando se reinicie la app no se pierda.
+- Primero lo vamos a hacer en local.
+Salimos de la ejecución y de la instancia de la máquina virtual luego `exit`
+Vamos a instalar MySQL: `brew install mysql`
+Vemos si esta en ejecución: `brew services info mysql`
+Si no esta en ejecución lo ponemos en ejecución: `brew services start mysql`
+Configuración del usuario (el root usuario): `mysqladmin -u root password 'root'` (no es lo mas conveniente poner la contraseña en texto directo aqui, pero bueno)
+Ahora para entrar ponemos: `mysql -u root -p` y nos pedira la contraseña que hemos puesto 'root'
+Y ya estamos dentro de MySQL y podemos crear la BD en local.
+
+- BD en MySQL:
+
+Ponemos en MySQL:
+'
+create database if not exists agenda default character set utf8 collate utf8_general_ci;
+use agenda;
+create table if not exists Person (id int unsigned not null AUTO_INCREMENT, name VARCHAR(100) NOT NULL, PRIMARY KEY (id) );
+'
+
+Ahora hacemos: `show databases;` y saldra entre las demás 'agenda'
+Seleccionamos la BD: `use agenda;`
+Vemos que no hay ningun usuario en la BD: `select * from Person;`
+Y podemos ver como es la tabla Person: `show columns from Person;`
+
+Ahora tenemos que conectar nuestra App a la BD:
+
+Salimos del sql: `exit`
+Y vamos al directorio de la 'apps/agenda'
+
+Ponemos en la terminal: `vim conf/application.conf`
+- En el Vim ponemos para poder editar `:syntax on` y pulsamos la letra 'i', esto hara que salga el modo -----insert-----
+Ahora podemos editar en el Vim, por defecto esta la BD en memoria debemos comentara y descomentar la de MySQL real
+'
+db {
+  #default.driver = org.h2.Driver
+  #default.url = "jdbc:h2:mem:play"
+  default.driver=com.mysql.cj.jdbc.Driver
+  #default.url="jdbc:mysql://root:root@localhost/play_agenda"
+  default.url="jdbc:mysql://root:root@localhost/agenda"
+  #default.username="root"
+  ...
+'
+
+Pulsamos el 'Esc' para salir de inserción y `:wq` para guardar y salir
+- Y ahora lo ejecuto (en local): `sbt run`
+
+Nos vamos en la web a: `http://localhost:9000/` donde vemos la app y añadimos personas al listado.
+
+Ahora desde otro terminal en la directiva de '/agenda'
+Ponemos: `mysql -u root -p`, la contraseña: 'root' y dentro de sql:  `use agenda;` y luego `select * from Person;` y vemos los usuarios añadidos
+
+Ahora si en la terminal donde estoy ejecutando en local, paramos la ejecución y lo volvemos a correr de nuevo `sbt run`, ya no se pierde los usuarios escritos anteriormente.
+
+- Para hacer la BD en producción en AWS, es decir para hacerlo en una BD persistente pero en producción tenemos que crear la BD en AWS.
+Tenemos que ir al servicio de UF2, crear y conectarnos a una nueva instancia e instalar y configurar MySQL en esa nueva instancia.
+
