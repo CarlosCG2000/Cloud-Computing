@@ -1,0 +1,1904 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://migue.github.io/play-aws/automated/terraform/">
+      
+      
+        <link rel="prev" href="../packer/">
+      
+      
+        <link rel="next" href="../../about/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
+    
+    
+      
+        <title>Deploying the image - PlayFramework and AWS</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#deploy-automation-with-terraform" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="PlayFramework and AWS" class="md-header__button md-logo" aria-label="PlayFramework and AWS" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            PlayFramework and AWS
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Deploying the image
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="PlayFramework and AWS" class="md-nav__button md-logo" aria-label="PlayFramework and AWS" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    PlayFramework and AWS
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Local development
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Local development
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../local/intro/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../local/running/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Running the app
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Manual deployment
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Manual deployment
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../manual/intro/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../manual/instance/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Creating the instance
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../manual/deploy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Deploying our application
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../manual/running/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Running our application
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Production database
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            Production database
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../database/intro/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Intro
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../database/local-mysql/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Local MySQL
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../database/dependencies/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dependencies
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../database/rds/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS RDS
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../database/connecting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Connecting to RDS
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Scaling and fault-tolerance
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6">
+            <span class="md-nav__icon md-icon"></span>
+            Scaling and fault-tolerance
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scaling/intro/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Intro
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scaling/ami/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Creating a snapshot
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scaling/loadbalancing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Load balancing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Infrastructure as Code
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Infrastructure as Code
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../iac/intro/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Intro
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../iac/why/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Why?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../iac/types/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Types
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../iac/benefits/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Benefits
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Automated deployment
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Automated deployment
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../intro/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Intro
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../packer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Building the image
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Deploying the image
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Deploying the image
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installing-terraform" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installing Terraform
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-a-terraform-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating a Terraform script
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-the-terraform-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      Understanding the Terraform script
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Understanding the Terraform script">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Providers
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defining-the-instances" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defining the instances
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-the-load-balancer" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating the load balancer
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Outputs
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#executing-the-terraform-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      Executing the Terraform script
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    About me
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installing-terraform" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installing Terraform
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-a-terraform-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating a Terraform script
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-the-terraform-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      Understanding the Terraform script
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Understanding the Terraform script">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Providers
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defining-the-instances" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defining the instances
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-the-load-balancer" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating the load balancer
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Outputs
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#executing-the-terraform-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      Executing the Terraform script
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="deploy-automation-with-terraform">Deploy automation with Terraform</h1>
+<p>In the previous section, we learned how to create an AMI with Packer. Now, we are going to learn how to deploy our application to AWS using Terraform. The idea is to create a fully automated deployment process, where we can create the infrastructure and deploy our application with a single command.</p>
+<p>The architecture is the same as the one we used during the whole course, the only difference is that we are going to build a repeatable and automated process to deploy it. Please, note that this application uses an in-memory database, so it is not suitable for production. Automating the generation of an RDS instance and connecting it to the application is left as an exercise that needs to be done by the students as part of the final project that needs to be delivered at the end of the course.</p>
+<h2 id="installing-terraform">Installing Terraform</h2>
+<p>You can find here how to install Terraform in your OS: <a href="https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli">Install Terraform</a></p>
+<h2 id="creating-a-terraform-script">Creating a Terraform script</h2>
+<p>Terraform scripts are written in HCL (https://github.com/hashicorp/hcl). Similar to what we did in the Packer section, let's start backwards, defining a fully functional Terraform script and then explaining each part.</p>
+<div class="highlight"><pre><span></span><code><span class="kr">variable</span><span class="w"> </span><span class="nv">&quot;ami_id&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">type</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="kt">string</span>
+<span class="w">  </span><span class="na">default</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="p">}</span>
+
+<span class="kr">provider</span><span class="w"> </span><span class="nv">&quot;aws&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;eu-south-2&quot;</span>
+<span class="w">  </span><span class="na">skip_region_validation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+<span class="p">}</span>
+
+<span class="kr">data</span><span class="w"> </span><span class="nc">&quot;aws_vpc&quot;</span><span class="w"> </span><span class="nv">&quot;default&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">default</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+<span class="p">}</span>
+
+<span class="kr">data</span><span class="w"> </span><span class="nc">&quot;aws_subnets&quot;</span><span class="w"> </span><span class="nv">&quot;default&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nb">filter</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">name</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;vpc-id&quot;</span>
+<span class="w">    </span><span class="na">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="nv">data.aws_vpc.default.id</span><span class="p">]</span>
+<span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_security_group&quot;</span><span class="w"> </span><span class="nv">&quot;instance&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;agenda&quot;</span>
+
+<span class="w">  </span><span class="nb">ingress</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">from_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">80</span>
+<span class="w">    </span><span class="na">to_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">80</span>
+<span class="w">    </span><span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;tcp&quot;</span>
+<span class="w">    </span><span class="na">security_groups</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="nv">aws_security_group.agenda_alb.id</span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_launch_template&quot;</span><span class="w"> </span><span class="nv">&quot;agenda&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w">          </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;agenda-template&quot;</span>
+<span class="w">  </span><span class="na">image_id</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="nv">var.ami_id</span>
+<span class="w">  </span><span class="na">instance_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;t3.micro&quot;</span>
+<span class="w">  </span><span class="na">key_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;mimo-cloud-teacher&quot;</span>
+<span class="w">  </span><span class="nb">block_device_mappings</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">device_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/dev/sda1&quot;</span>
+<span class="w">    </span><span class="nb">ebs</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="na">volume_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span>
+<span class="w">      </span><span class="na">volume_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;gp2&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nb">network_interfaces</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">associate_public_ip_address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+<span class="w">    </span><span class="na">security_groups</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="nv">aws_security_group.instance.id</span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nb">tag_specifications</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">resource_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;instance&quot;</span>
+<span class="w">    </span><span class="nb">tags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="na">Name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;agenda-app&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_autoscaling_group&quot;</span><span class="w"> </span><span class="nv">&quot;agenda_asg&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nb">launch_template</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">id</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_launch_template.agenda.id</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="na">vpc_zone_identifier</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">data.aws_subnets.default.ids</span>
+
+<span class="w">  </span><span class="na">target_group_arns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="nv">aws_lb_target_group.agenda_tg.arn</span><span class="p">]</span>
+<span class="w">  </span><span class="na">health_check_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;ELB&quot;</span>
+
+<span class="w">  </span><span class="na">min_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+<span class="w">  </span><span class="na">desired_capacity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span>
+<span class="w">  </span><span class="na">max_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">6</span>
+
+<span class="w">  </span><span class="nb">tag</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Name&quot;</span>
+<span class="w">    </span><span class="na">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;agenda-asg&quot;</span>
+<span class="w">    </span><span class="na">propagate_at_launch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_lb&quot;</span><span class="w"> </span><span class="nv">&quot;agenda_lb&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;agenda&quot;</span>
+<span class="w">  </span><span class="na">load_balancer_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;application&quot;</span>
+<span class="w">  </span><span class="na">subnets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">data.aws_subnets.default.ids</span>
+<span class="w">  </span><span class="na">security_groups</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="nv">aws_security_group.agenda_alb.id</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_lb_listener&quot;</span><span class="w"> </span><span class="nv">&quot;http&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">load_balancer_arn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_lb.agenda_lb.arn</span>
+<span class="w">  </span><span class="na">port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">80</span>
+<span class="w">  </span><span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;HTTP&quot;</span>
+
+<span class="w">  </span><span class="nb">default_action</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;fixed-response&quot;</span>
+
+<span class="w">    </span><span class="nb">fixed_response</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="na">content_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;text/plain&quot;</span>
+<span class="w">      </span><span class="na">message_body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Page Not Found&quot;</span>
+<span class="w">      </span><span class="na">status_code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">404</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_security_group&quot;</span><span class="w"> </span><span class="nv">&quot;agenda_alb&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;agenda-alb&quot;</span>
+
+<span class="w">  </span><span class="nb">ingress</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">from_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">80</span>
+<span class="w">    </span><span class="na">to_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">80</span>
+<span class="w">    </span><span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;tcp&quot;</span>
+<span class="w">    </span><span class="na">cidr_blocks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;0.0.0.0/0&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nb">egress</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="na">from_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="w">      </span><span class="na">to_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="w">      </span><span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;-1&quot;</span>
+<span class="w">      </span><span class="na">cidr_blocks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;0.0.0.0/0&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_lb_target_group&quot;</span><span class="w"> </span><span class="nv">&quot;agenda_tg&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;agenda-tg&quot;</span>
+<span class="w">  </span><span class="na">port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">80</span>
+<span class="w">  </span><span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;HTTP&quot;</span>
+<span class="w">  </span><span class="na">vpc_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">data.aws_vpc.default.id</span>
+
+<span class="w">  </span><span class="nb">health_check</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/health&quot;</span>
+<span class="w">    </span><span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;HTTP&quot;</span>
+<span class="w">    </span><span class="na">matcher</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;200&quot;</span>
+<span class="w">    </span><span class="na">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">15</span>
+<span class="w">    </span><span class="na">timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span>
+<span class="w">    </span><span class="na">healthy_threshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span>
+<span class="w">    </span><span class="na">unhealthy_threshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_lb_listener_rule&quot;</span><span class="w"> </span><span class="nv">&quot;asg&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">listener_arn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_lb_listener.http.arn</span>
+<span class="w">  </span><span class="na">priority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">100</span>
+
+<span class="w">  </span><span class="nb">condition</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nb">path_pattern</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="na">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nb">action</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;forward&quot;</span>
+<span class="w">    </span><span class="na">target_group_arn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_lb_target_group.agenda_tg.arn</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">output</span><span class="w"> </span><span class="nv">&quot;agenda_alb_dns_name&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_lb.agenda_lb</span>
+<span class="w">  </span><span class="na">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Domain name of the Agenda App ALB&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="understanding-the-terraform-script">Understanding the Terraform script</h2>
+<h3 id="providers">Providers</h3>
+<p>The first part of the script defines the provider we are going to use. In this case, we are using AWS, so we define the provider as follows:</p>
+<div class="highlight"><pre><span></span><code><span class="kr">provider</span><span class="w"> </span><span class="nv">&quot;aws&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;eu-south-2&quot;</span>
+<span class="w">  </span><span class="na">skip_region_validation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Terraform has different providers implementations covering a wide range of cloud providers and services. You can find more information about the providers in the documentation: <a href="https://registry.terraform.io/browse/providers">Terraform Providers</a></p>
+<h3 id="defining-the-instances">Defining the instances</h3>
+<p>Now that we have the provider defined, we can start defining the different resources we need to create. The first one is the security group for the instances and the instances themselves.</p>
+<div class="highlight"><pre><span></span><code><span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_security_group&quot;</span><span class="w"> </span><span class="nv">&quot;instance&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;agenda&quot;</span>
+
+<span class="w">  </span><span class="nb">ingress</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">from_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">80</span>
+<span class="w">    </span><span class="na">to_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">80</span>
+<span class="w">    </span><span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;tcp&quot;</span>
+<span class="w">    </span><span class="na">security_groups</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="nv">aws_security_group.agenda_alb.id</span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_launch_template&quot;</span><span class="w"> </span><span class="nv">&quot;agenda&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w">          </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;agenda-template&quot;</span>
+<span class="w">  </span><span class="na">image_id</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="nv">var.ami_id</span>
+<span class="w">  </span><span class="na">instance_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;t3.micro&quot;</span>
+<span class="w">  </span><span class="na">key_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;mimo-cloud-teacher&quot;</span>
+<span class="w">  </span><span class="nb">block_device_mappings</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">device_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/dev/sda1&quot;</span>
+<span class="w">    </span><span class="nb">ebs</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="na">volume_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span>
+<span class="w">      </span><span class="na">volume_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;gp2&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nb">network_interfaces</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">associate_public_ip_address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+<span class="w">    </span><span class="na">security_groups</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="nv">aws_security_group.instance.id</span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nb">tag_specifications</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">resource_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;instance&quot;</span>
+<span class="w">    </span><span class="nb">tags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="na">Name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;agenda-app&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_autoscaling_group&quot;</span><span class="w"> </span><span class="nv">&quot;agenda_asg&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nb">launch_template</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">id</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_launch_template.agenda.id</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="na">vpc_zone_identifier</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">data.aws_subnets.default.ids</span>
+
+<span class="w">  </span><span class="na">target_group_arns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="nv">aws_lb_target_group.agenda_tg.arn</span><span class="p">]</span>
+<span class="w">  </span><span class="na">health_check_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;ELB&quot;</span>
+
+<span class="w">  </span><span class="na">min_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+<span class="w">  </span><span class="na">desired_capacity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span>
+<span class="w">  </span><span class="na">max_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">6</span>
+
+<span class="w">  </span><span class="nb">tag</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Name&quot;</span>
+<span class="w">    </span><span class="na">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;agenda-asg&quot;</span>
+<span class="w">    </span><span class="na">propagate_at_launch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>We are basically defining the security group for the instances, the launch template, and the autoscaling group. The autoscaling group will create instances based on the launch template and will register them in. This way, we can have a dynamic number of instances running our application.</p>
+<p>As you can see, this is the same architecture we manually created in the previous sections. The difference is that now we are automating the process, being able to have a fully functional envrironment using a repeatable and less error-prone process.</p>
+<h3 id="creating-the-load-balancer">Creating the load balancer</h3>
+<p>Now that we have the instances, we need to create a load balancer to distribute the traffic among them. The following code creates the load balancer, the target group, and the listener rules.</p>
+<div class="highlight"><pre><span></span><code><span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_lb&quot;</span><span class="w"> </span><span class="nv">&quot;agenda_lb&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;agenda&quot;</span>
+<span class="w">  </span><span class="na">load_balancer_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;application&quot;</span>
+<span class="w">  </span><span class="na">subnets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">data.aws_subnets.default.ids</span>
+<span class="w">  </span><span class="na">security_groups</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="nv">aws_security_group.agenda_alb.id</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_lb_listener&quot;</span><span class="w"> </span><span class="nv">&quot;http&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">load_balancer_arn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_lb.agenda_lb.arn</span>
+<span class="w">  </span><span class="na">port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">80</span>
+<span class="w">  </span><span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;HTTP&quot;</span>
+
+<span class="w">  </span><span class="nb">default_action</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;fixed-response&quot;</span>
+
+<span class="w">    </span><span class="nb">fixed_response</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="na">content_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;text/plain&quot;</span>
+<span class="w">      </span><span class="na">message_body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Page Not Found&quot;</span>
+<span class="w">      </span><span class="na">status_code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">404</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_security_group&quot;</span><span class="w"> </span><span class="nv">&quot;agenda_alb&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;agenda-alb&quot;</span>
+
+<span class="w">  </span><span class="nb">ingress</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">from_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">80</span>
+<span class="w">    </span><span class="na">to_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">80</span>
+<span class="w">    </span><span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;tcp&quot;</span>
+<span class="w">    </span><span class="na">cidr_blocks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;0.0.0.0/0&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nb">egress</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="na">from_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="w">      </span><span class="na">to_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="w">      </span><span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;-1&quot;</span>
+<span class="w">      </span><span class="na">cidr_blocks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;0.0.0.0/0&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_lb_target_group&quot;</span><span class="w"> </span><span class="nv">&quot;agenda_tg&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;agenda-tg&quot;</span>
+<span class="w">  </span><span class="na">port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">80</span>
+<span class="w">  </span><span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;HTTP&quot;</span>
+<span class="w">  </span><span class="na">vpc_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">data.aws_vpc.default.id</span>
+
+<span class="w">  </span><span class="nb">health_check</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/health&quot;</span>
+<span class="w">    </span><span class="na">protocol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;HTTP&quot;</span>
+<span class="w">    </span><span class="na">matcher</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;200&quot;</span>
+<span class="w">    </span><span class="na">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">15</span>
+<span class="w">    </span><span class="na">timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span>
+<span class="w">    </span><span class="na">healthy_threshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span>
+<span class="w">    </span><span class="na">unhealthy_threshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">resource</span><span class="w"> </span><span class="nc">&quot;aws_lb_listener_rule&quot;</span><span class="w"> </span><span class="nv">&quot;asg&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">listener_arn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_lb_listener.http.arn</span>
+<span class="w">  </span><span class="na">priority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">100</span>
+
+<span class="w">  </span><span class="nb">condition</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nb">path_pattern</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="na">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nb">action</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;forward&quot;</span>
+<span class="w">    </span><span class="na">target_group_arn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_lb_target_group.agenda_tg.arn</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Again, we are creating the same architecture we manually created in the previous sections. The load balancer will distribute the traffic among the instances created by the autoscaling group, and every time a new instance is created or destroyed, the load balancer will automatically adjust the traffic distribution.</p>
+<h3 id="outputs">Outputs</h3>
+<p>Finally, we define the outputs of the script. In this case, we are going to output the DNS name of the load balancer, so we can access the application.</p>
+<div class="highlight"><pre><span></span><code><span class="kr">output</span><span class="w"> </span><span class="nv">&quot;agenda_alb_dns_name&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_lb.agenda_lb</span>
+<span class="w">  </span><span class="na">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Domain name of the Agenda App ALB&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="executing-the-terraform-script">Executing the Terraform script</h2>
+<p>The first thing we need to do is to init the Terraform script. From the deploy <code>folder</code>, run:</p>
+<div class="highlight"><pre><span></span><code>terraform<span class="w"> </span>init<span class="w"> </span>.
+</code></pre></div>
+<p>It will download the required providers and configure the environment to run the script.</p>
+<p>You can validate the script with:</p>
+<div class="highlight"><pre><span></span><code>terraform<span class="w"> </span>validate
+</code></pre></div>
+<p>that will validate the syntax of the script. You should see something like:</p>
+<div class="highlight"><pre><span></span><code>Success!<span class="w"> </span>The<span class="w"> </span>configuration<span class="w"> </span>is<span class="w"> </span>valid.
+</code></pre></div>
+<p>Before we actually run the build process, note that we need to provide the AWS credentials to Terraform. You can do it by setting the environment variables:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">AWS_ACCESS_KEY_ID</span><span class="o">=</span>your_access_key
+<span class="nb">export</span><span class="w"> </span><span class="nv">AWS_SECRET_ACCESS_KEY</span><span class="o">=</span>your_secret_key
+</code></pre></div>
+<p>Now, we can see the plan of the script with:</p>
+<div class="highlight"><pre><span></span><code>terraform<span class="w"> </span>plan<span class="w"> </span>-var<span class="w"> </span><span class="s1">&#39;ami_id=&lt;your-ami-id&gt;&#39;</span>
+</code></pre></div>
+<p>This will show you the resources that are going to be created, updated, or destroyed. Note this is a dry-run, and no resources will be created or updated. The output should be something like:</p>
+<div class="highlight"><pre><span></span><code>deploy<span class="w"> </span>git:<span class="o">(</span>main<span class="o">)</span><span class="w"> </span>✗<span class="w"> </span>terraform<span class="w"> </span>plan
+data.aws_vpc.default:<span class="w"> </span>Reading...
+data.aws_vpc.default:<span class="w"> </span>Read<span class="w"> </span><span class="nb">complete</span><span class="w"> </span>after<span class="w"> </span>5s<span class="w"> </span><span class="o">[</span><span class="nv">id</span><span class="o">=</span>vpc-0f5918a8441f43e9d<span class="o">]</span>
+data.aws_subnets.default:<span class="w"> </span>Reading...
+data.aws_subnets.default:<span class="w"> </span>Read<span class="w"> </span><span class="nb">complete</span><span class="w"> </span>after<span class="w"> </span>0s<span class="w"> </span><span class="o">[</span><span class="nv">id</span><span class="o">=</span>eu-south-2<span class="o">]</span>
+
+Terraform<span class="w"> </span>used<span class="w"> </span>the<span class="w"> </span>selected<span class="w"> </span>providers<span class="w"> </span>to<span class="w"> </span>generate<span class="w"> </span>the<span class="w"> </span>following<span class="w"> </span>execution<span class="w"> </span>plan.<span class="w"> </span>Resource<span class="w"> </span>actions<span class="w"> </span>are<span class="w"> </span>indicated<span class="w"> </span>with<span class="w"> </span>the<span class="w"> </span>following<span class="w"> </span>symbols:
+<span class="w">  </span>+<span class="w"> </span>create
+
+Terraform<span class="w"> </span>will<span class="w"> </span>perform<span class="w"> </span>the<span class="w"> </span>following<span class="w"> </span>actions:
+
+<span class="w">  </span><span class="c1"># aws_autoscaling_group.agenda_asg will be created</span>
+<span class="w">  </span>+<span class="w"> </span>resource<span class="w"> </span><span class="s2">&quot;aws_autoscaling_group&quot;</span><span class="w"> </span><span class="s2">&quot;agenda_asg&quot;</span><span class="w"> </span><span class="o">{</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">arn</span><span class="w">                              </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">availability_zones</span><span class="w">               </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">default_cooldown</span><span class="w">                 </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">desired_capacity</span><span class="w">                 </span><span class="o">=</span><span class="w"> </span><span class="m">3</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">force_delete</span><span class="w">                     </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">force_delete_warm_pool</span><span class="w">           </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">health_check_grace_period</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="m">300</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">health_check_type</span><span class="w">                </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;ELB&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">id</span><span class="w">                               </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">ignore_failed_scaling_activities</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">load_balancers</span><span class="w">                   </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">max_size</span><span class="w">                         </span><span class="o">=</span><span class="w"> </span><span class="m">6</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">metrics_granularity</span><span class="w">              </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;1Minute&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">min_size</span><span class="w">                         </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">name</span><span class="w">                             </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">name_prefix</span><span class="w">                      </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">predicted_capacity</span><span class="w">               </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">protect_from_scale_in</span><span class="w">            </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">service_linked_role_arn</span><span class="w">          </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">target_group_arns</span><span class="w">                </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">vpc_zone_identifier</span><span class="w">              </span><span class="o">=</span><span class="w"> </span><span class="o">[</span>
+<span class="w">          </span>+<span class="w"> </span><span class="s2">&quot;subnet-050010bfc645b3a2e&quot;</span>,
+<span class="w">          </span>+<span class="w"> </span><span class="s2">&quot;subnet-055234c6df6254488&quot;</span>,
+<span class="w">          </span>+<span class="w"> </span><span class="s2">&quot;subnet-0be41289b68a0f06d&quot;</span>,
+<span class="w">        </span><span class="o">]</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">wait_for_capacity_timeout</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;10m&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">warm_pool_size</span><span class="w">                   </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+
+<span class="w">      </span>+<span class="w"> </span>launch_template<span class="w"> </span><span class="o">{</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">id</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">name</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">        </span><span class="o">}</span>
+
+<span class="w">      </span>+<span class="w"> </span>mixed_instances_policy<span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+
+<span class="w">      </span>+<span class="w"> </span>tag<span class="w"> </span><span class="o">{</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">key</span><span class="w">                 </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Name&quot;</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">propagate_at_launch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">value</span><span class="w">               </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;agenda-asg&quot;</span>
+<span class="w">        </span><span class="o">}</span>
+
+<span class="w">      </span>+<span class="w"> </span>traffic_source<span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">    </span><span class="o">}</span>
+
+<span class="w">  </span><span class="c1"># aws_launch_template.agenda will be created</span>
+<span class="w">  </span>+<span class="w"> </span>resource<span class="w"> </span><span class="s2">&quot;aws_launch_template&quot;</span><span class="w"> </span><span class="s2">&quot;agenda&quot;</span><span class="w"> </span><span class="o">{</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">arn</span><span class="w">             </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">default_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">id</span><span class="w">              </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">instance_type</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;t3.micro&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">key_name</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;mimo-cloud-teacher&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">latest_version</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">name</span><span class="w">            </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;agenda-template&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">name_prefix</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">tags_all</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">        </span><span class="c1"># (1 unchanged attribute hidden)</span>
+
+<span class="w">      </span>+<span class="w"> </span>block_device_mappings<span class="w"> </span><span class="o">{</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">device_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/dev/sda1&quot;</span>
+
+<span class="w">          </span>+<span class="w"> </span>ebs<span class="w"> </span><span class="o">{</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">iops</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">throughput</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">volume_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">volume_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;gp2&quot;</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">        </span><span class="o">}</span>
+
+<span class="w">      </span>+<span class="w"> </span>metadata_options<span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+
+<span class="w">      </span>+<span class="w"> </span>network_interfaces<span class="w"> </span><span class="o">{</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">associate_public_ip_address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;true&quot;</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">security_groups</span><span class="w">             </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">        </span><span class="o">}</span>
+
+<span class="w">      </span>+<span class="w"> </span>tag_specifications<span class="w"> </span><span class="o">{</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">resource_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;instance&quot;</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">tags</span><span class="w">          </span><span class="o">=</span><span class="w"> </span><span class="o">{</span>
+<span class="w">              </span>+<span class="w"> </span><span class="s2">&quot;Name&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;agenda-app&quot;</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">        </span><span class="o">}</span>
+<span class="w">    </span><span class="o">}</span>
+
+<span class="w">  </span><span class="c1"># aws_lb.agenda_lb will be created</span>
+<span class="w">  </span>+<span class="w"> </span>resource<span class="w"> </span><span class="s2">&quot;aws_lb&quot;</span><span class="w"> </span><span class="s2">&quot;agenda_lb&quot;</span><span class="w"> </span><span class="o">{</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">arn</span><span class="w">                                                          </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">arn_suffix</span><span class="w">                                                   </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">client_keep_alive</span><span class="w">                                            </span><span class="o">=</span><span class="w"> </span><span class="m">3600</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">desync_mitigation_mode</span><span class="w">                                       </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;defensive&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">dns_name</span><span class="w">                                                     </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">drop_invalid_header_fields</span><span class="w">                                   </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">enable_deletion_protection</span><span class="w">                                   </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">enable_http2</span><span class="w">                                                 </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">enable_tls_version_and_cipher_suite_headers</span><span class="w">                  </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">enable_waf_fail_open</span><span class="w">                                         </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">enable_xff_client_port</span><span class="w">                                       </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">enforce_security_group_inbound_rules_on_private_link_traffic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">id</span><span class="w">                                                           </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">idle_timeout</span><span class="w">                                                 </span><span class="o">=</span><span class="w"> </span><span class="m">60</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">internal</span><span class="w">                                                     </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">ip_address_type</span><span class="w">                                              </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">load_balancer_type</span><span class="w">                                           </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;application&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">name</span><span class="w">                                                         </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;agenda&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">name_prefix</span><span class="w">                                                  </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">preserve_host_header</span><span class="w">                                         </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">security_groups</span><span class="w">                                              </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">subnets</span><span class="w">                                                      </span><span class="o">=</span><span class="w"> </span><span class="o">[</span>
+<span class="w">          </span>+<span class="w"> </span><span class="s2">&quot;subnet-050010bfc645b3a2e&quot;</span>,
+<span class="w">          </span>+<span class="w"> </span><span class="s2">&quot;subnet-055234c6df6254488&quot;</span>,
+<span class="w">          </span>+<span class="w"> </span><span class="s2">&quot;subnet-0be41289b68a0f06d&quot;</span>,
+<span class="w">        </span><span class="o">]</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">tags_all</span><span class="w">                                                     </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">vpc_id</span><span class="w">                                                       </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">xff_header_processing_mode</span><span class="w">                                   </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;append&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">zone_id</span><span class="w">                                                      </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+
+<span class="w">      </span>+<span class="w"> </span>subnet_mapping<span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">    </span><span class="o">}</span>
+
+<span class="w">  </span><span class="c1"># aws_lb_listener.http will be created</span>
+<span class="w">  </span>+<span class="w"> </span>resource<span class="w"> </span><span class="s2">&quot;aws_lb_listener&quot;</span><span class="w"> </span><span class="s2">&quot;http&quot;</span><span class="w"> </span><span class="o">{</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">arn</span><span class="w">                      </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">id</span><span class="w">                       </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">load_balancer_arn</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">port</span><span class="w">                     </span><span class="o">=</span><span class="w"> </span><span class="m">80</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">protocol</span><span class="w">                 </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;HTTP&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">ssl_policy</span><span class="w">               </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">tags_all</span><span class="w">                 </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">tcp_idle_timeout_seconds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+
+<span class="w">      </span>+<span class="w"> </span>default_action<span class="w"> </span><span class="o">{</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nb">type</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;fixed-response&quot;</span>
+
+<span class="w">          </span>+<span class="w"> </span>fixed_response<span class="w"> </span><span class="o">{</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">content_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;text/plain&quot;</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">message_body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Page Not Found&quot;</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">status_code</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;404&quot;</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">        </span><span class="o">}</span>
+
+<span class="w">      </span>+<span class="w"> </span>mutual_authentication<span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">    </span><span class="o">}</span>
+
+<span class="w">  </span><span class="c1"># aws_lb_listener_rule.asg will be created</span>
+<span class="w">  </span>+<span class="w"> </span>resource<span class="w"> </span><span class="s2">&quot;aws_lb_listener_rule&quot;</span><span class="w"> </span><span class="s2">&quot;asg&quot;</span><span class="w"> </span><span class="o">{</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">arn</span><span class="w">          </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">id</span><span class="w">           </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">listener_arn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">priority</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="m">100</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">tags_all</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+
+<span class="w">      </span>+<span class="w"> </span>action<span class="w"> </span><span class="o">{</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">order</span><span class="w">            </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">target_group_arn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nb">type</span><span class="w">             </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;forward&quot;</span>
+<span class="w">        </span><span class="o">}</span>
+
+<span class="w">      </span>+<span class="w"> </span>condition<span class="w"> </span><span class="o">{</span>
+<span class="w">          </span>+<span class="w"> </span>path_pattern<span class="w"> </span><span class="o">{</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span>
+<span class="w">                  </span>+<span class="w"> </span><span class="s2">&quot;*&quot;</span>,
+<span class="w">                </span><span class="o">]</span>
+<span class="w">            </span><span class="o">}</span>
+<span class="w">        </span><span class="o">}</span>
+<span class="w">    </span><span class="o">}</span>
+
+<span class="w">  </span><span class="c1"># aws_lb_target_group.agenda_tg will be created</span>
+<span class="w">  </span>+<span class="w"> </span>resource<span class="w"> </span><span class="s2">&quot;aws_lb_target_group&quot;</span><span class="w"> </span><span class="s2">&quot;agenda_tg&quot;</span><span class="w"> </span><span class="o">{</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">arn</span><span class="w">                                </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">arn_suffix</span><span class="w">                         </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">connection_termination</span><span class="w">             </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">deregistration_delay</span><span class="w">               </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;300&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">id</span><span class="w">                                 </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">ip_address_type</span><span class="w">                    </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">lambda_multi_value_headers_enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">load_balancer_arns</span><span class="w">                 </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">load_balancing_algorithm_type</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">load_balancing_anomaly_mitigation</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">load_balancing_cross_zone_enabled</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">name</span><span class="w">                               </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;agenda-tg&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">name_prefix</span><span class="w">                        </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">port</span><span class="w">                               </span><span class="o">=</span><span class="w"> </span><span class="m">80</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">preserve_client_ip</span><span class="w">                 </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">protocol</span><span class="w">                           </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;HTTP&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">protocol_version</span><span class="w">                   </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">proxy_protocol_v2</span><span class="w">                  </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">slow_start</span><span class="w">                         </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">tags_all</span><span class="w">                           </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">target_type</span><span class="w">                        </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;instance&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">vpc_id</span><span class="w">                             </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;vpc-0f5918a8441f43e9d&quot;</span>
+
+<span class="w">      </span>+<span class="w"> </span>health_check<span class="w"> </span><span class="o">{</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">enabled</span><span class="w">             </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">healthy_threshold</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="m">3</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">interval</span><span class="w">            </span><span class="o">=</span><span class="w"> </span><span class="m">15</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">matcher</span><span class="w">             </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;200&quot;</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">path</span><span class="w">                </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/health&quot;</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">port</span><span class="w">                </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;traffic-port&quot;</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">protocol</span><span class="w">            </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;HTTP&quot;</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">timeout</span><span class="w">             </span><span class="o">=</span><span class="w"> </span><span class="m">5</span>
+<span class="w">          </span>+<span class="w"> </span><span class="nv">unhealthy_threshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span>
+<span class="w">        </span><span class="o">}</span>
+
+<span class="w">      </span>+<span class="w"> </span>stickiness<span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+
+<span class="w">      </span>+<span class="w"> </span>target_failover<span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+
+<span class="w">      </span>+<span class="w"> </span>target_group_health<span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+
+<span class="w">      </span>+<span class="w"> </span>target_health_state<span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">    </span><span class="o">}</span>
+
+<span class="w">  </span><span class="c1"># aws_security_group.agenda_alb will be created</span>
+<span class="w">  </span>+<span class="w"> </span>resource<span class="w"> </span><span class="s2">&quot;aws_security_group&quot;</span><span class="w"> </span><span class="s2">&quot;agenda_alb&quot;</span><span class="w"> </span><span class="o">{</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">arn</span><span class="w">                    </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">description</span><span class="w">            </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Managed by Terraform&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">egress</span><span class="w">                 </span><span class="o">=</span><span class="w"> </span><span class="o">[</span>
+<span class="w">          </span>+<span class="w"> </span><span class="o">{</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">cidr_blocks</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="o">[</span>
+<span class="w">                  </span>+<span class="w"> </span><span class="s2">&quot;0.0.0.0/0&quot;</span>,
+<span class="w">                </span><span class="o">]</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">from_port</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">ipv6_cidr_blocks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[]</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">prefix_list_ids</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="o">[]</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">protocol</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;-1&quot;</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">security_groups</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="o">[]</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">self</span><span class="w">             </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">to_port</span><span class="w">          </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="w">                </span><span class="c1"># (1 unchanged attribute hidden)</span>
+<span class="w">            </span><span class="o">}</span>,
+<span class="w">        </span><span class="o">]</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">id</span><span class="w">                     </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">ingress</span><span class="w">                </span><span class="o">=</span><span class="w"> </span><span class="o">[</span>
+<span class="w">          </span>+<span class="w"> </span><span class="o">{</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">cidr_blocks</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="o">[</span>
+<span class="w">                  </span>+<span class="w"> </span><span class="s2">&quot;0.0.0.0/0&quot;</span>,
+<span class="w">                </span><span class="o">]</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">from_port</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="m">80</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">ipv6_cidr_blocks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[]</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">prefix_list_ids</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="o">[]</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">protocol</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;tcp&quot;</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">security_groups</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="o">[]</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">self</span><span class="w">             </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">to_port</span><span class="w">          </span><span class="o">=</span><span class="w"> </span><span class="m">80</span>
+<span class="w">                </span><span class="c1"># (1 unchanged attribute hidden)</span>
+<span class="w">            </span><span class="o">}</span>,
+<span class="w">        </span><span class="o">]</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">name</span><span class="w">                   </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;agenda-alb&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">name_prefix</span><span class="w">            </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">owner_id</span><span class="w">               </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">revoke_rules_on_delete</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">tags_all</span><span class="w">               </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">vpc_id</span><span class="w">                 </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">    </span><span class="o">}</span>
+
+<span class="w">  </span><span class="c1"># aws_security_group.instance will be created</span>
+<span class="w">  </span>+<span class="w"> </span>resource<span class="w"> </span><span class="s2">&quot;aws_security_group&quot;</span><span class="w"> </span><span class="s2">&quot;instance&quot;</span><span class="w"> </span><span class="o">{</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">arn</span><span class="w">                    </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">description</span><span class="w">            </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Managed by Terraform&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">egress</span><span class="w">                 </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">id</span><span class="w">                     </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">ingress</span><span class="w">                </span><span class="o">=</span><span class="w"> </span><span class="o">[</span>
+<span class="w">          </span>+<span class="w"> </span><span class="o">{</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">cidr_blocks</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="o">[]</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">from_port</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="m">80</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">ipv6_cidr_blocks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[]</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">prefix_list_ids</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="o">[]</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">protocol</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;tcp&quot;</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">security_groups</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">self</span><span class="w">             </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">              </span>+<span class="w"> </span><span class="nv">to_port</span><span class="w">          </span><span class="o">=</span><span class="w"> </span><span class="m">80</span>
+<span class="w">                </span><span class="c1"># (1 unchanged attribute hidden)</span>
+<span class="w">            </span><span class="o">}</span>,
+<span class="w">        </span><span class="o">]</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">name</span><span class="w">                   </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;agenda&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">name_prefix</span><span class="w">            </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">owner_id</span><span class="w">               </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">revoke_rules_on_delete</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">tags_all</span><span class="w">               </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">vpc_id</span><span class="w">                 </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">    </span><span class="o">}</span>
+
+Plan:<span class="w"> </span><span class="m">8</span><span class="w"> </span>to<span class="w"> </span>add,<span class="w"> </span><span class="m">0</span><span class="w"> </span>to<span class="w"> </span>change,<span class="w"> </span><span class="m">0</span><span class="w"> </span>to<span class="w"> </span>destroy.
+
+Changes<span class="w"> </span>to<span class="w"> </span>Outputs:
+<span class="w">  </span>+<span class="w"> </span><span class="nv">agenda_alb_dns_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">{</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">access_logs</span><span class="w">                                                  </span><span class="o">=</span><span class="w"> </span><span class="o">[]</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">arn</span><span class="w">                                                          </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">arn_suffix</span><span class="w">                                                   </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">client_keep_alive</span><span class="w">                                            </span><span class="o">=</span><span class="w"> </span><span class="m">3600</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">connection_logs</span><span class="w">                                              </span><span class="o">=</span><span class="w"> </span><span class="o">[]</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">customer_owned_ipv4_pool</span><span class="w">                                     </span><span class="o">=</span><span class="w"> </span>null
+<span class="w">      </span>+<span class="w"> </span><span class="nv">desync_mitigation_mode</span><span class="w">                                       </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;defensive&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">dns_name</span><span class="w">                                                     </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">dns_record_client_routing_policy</span><span class="w">                             </span><span class="o">=</span><span class="w"> </span>null
+<span class="w">      </span>+<span class="w"> </span><span class="nv">drop_invalid_header_fields</span><span class="w">                                   </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">enable_cross_zone_load_balancing</span><span class="w">                             </span><span class="o">=</span><span class="w"> </span>null
+<span class="w">      </span>+<span class="w"> </span><span class="nv">enable_deletion_protection</span><span class="w">                                   </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">enable_http2</span><span class="w">                                                 </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">enable_tls_version_and_cipher_suite_headers</span><span class="w">                  </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">enable_waf_fail_open</span><span class="w">                                         </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">enable_xff_client_port</span><span class="w">                                       </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">enable_zonal_shift</span><span class="w">                                           </span><span class="o">=</span><span class="w"> </span>null
+<span class="w">      </span>+<span class="w"> </span><span class="nv">enforce_security_group_inbound_rules_on_private_link_traffic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">id</span><span class="w">                                                           </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">idle_timeout</span><span class="w">                                                 </span><span class="o">=</span><span class="w"> </span><span class="m">60</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">internal</span><span class="w">                                                     </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">ip_address_type</span><span class="w">                                              </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">load_balancer_type</span><span class="w">                                           </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;application&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">name</span><span class="w">                                                         </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;agenda&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">name_prefix</span><span class="w">                                                  </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">preserve_host_header</span><span class="w">                                         </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">security_groups</span><span class="w">                                              </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">subnet_mapping</span><span class="w">                                               </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">subnets</span><span class="w">                                                      </span><span class="o">=</span><span class="w"> </span><span class="o">[</span>
+<span class="w">          </span>+<span class="w"> </span><span class="s2">&quot;subnet-050010bfc645b3a2e&quot;</span>,
+<span class="w">          </span>+<span class="w"> </span><span class="s2">&quot;subnet-055234c6df6254488&quot;</span>,
+<span class="w">          </span>+<span class="w"> </span><span class="s2">&quot;subnet-0be41289b68a0f06d&quot;</span>,
+<span class="w">        </span><span class="o">]</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">tags</span><span class="w">                                                         </span><span class="o">=</span><span class="w"> </span>null
+<span class="w">      </span>+<span class="w"> </span><span class="nv">tags_all</span><span class="w">                                                     </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">timeouts</span><span class="w">                                                     </span><span class="o">=</span><span class="w"> </span>null
+<span class="w">      </span>+<span class="w"> </span><span class="nv">vpc_id</span><span class="w">                                                       </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">xff_header_processing_mode</span><span class="w">                                   </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;append&quot;</span>
+<span class="w">      </span>+<span class="w"> </span><span class="nv">zone_id</span><span class="w">                                                      </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>known<span class="w"> </span>after<span class="w"> </span>apply<span class="o">)</span>
+<span class="w">    </span><span class="o">}</span>
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+Note:<span class="w"> </span>You<span class="w"> </span>didn<span class="s1">&#39;t use the -out option to save this plan, so Terraform can&#39;</span>t<span class="w"> </span>guarantee<span class="w"> </span>to<span class="w"> </span>take<span class="w"> </span>exactly<span class="w"> </span>these<span class="w"> </span>actions<span class="w"> </span><span class="k">if</span><span class="w"> </span>you<span class="w"> </span>run<span class="w"> </span><span class="s2">&quot;terraform apply&quot;</span><span class="w"> </span>now.
+</code></pre></div>
+<p>If everything looks good, you can apply the script with:</p>
+<div class="highlight"><pre><span></span><code>terraform<span class="w"> </span>apply<span class="w"> </span>-var<span class="w"> </span><span class="s1">&#39;ami_id=&lt;your-ami-id&gt;&#39;</span>
+</code></pre></div>
+<p>This will show you the resources that are going to be created, updated, or destroyed. If everything looks good, type <code>yes</code> and hit enter. Terraform will start creating the resources.</p>
+<p>Have you suceeded? Can you access the application?</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      
+    
+  </body>
+</html>
